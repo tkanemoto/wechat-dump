@@ -83,9 +83,9 @@ elif [[ $1 == "db" || $1 == "res" ]]; then
 elif [[ $1 == "db-decrypt" ]]; then
 	set -e
 	echo "Getting uin..."
-	$0 uin | tail -n1 | $GREP -o '\-?[0-9]*' | tee /tmp/uin
+	$0 uin | tail -n1 | $GREP -o '\-?[0-9]+' | tee /tmp/uin
 	echo "Getting imei..."
-	$0 imei | tail -n1 | $GREP -o '[0-9]*' | tee /tmp/imei
+	$0 imei | tail -n1 | $GREP -o '[0-9]+' | tee /tmp/imei
 	echo "Getting db..."
 	$0 db
 	echo "Decrypting db..."
