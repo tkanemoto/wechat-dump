@@ -54,9 +54,8 @@ elif [[ $1 == "db" || $1 == "res" ]]; then
 		echo "Pulling resources... this might take a long time, because adb sucks..."
 		mkdir -p resource; cd resource
 		for d in image2 voice2 emoji video sfs; do
-			mkdir -p $d; cd $d
+			mkdir -p $d
 			adb pull "$RES_DIR/$chooseUser/$d"
-			cd ..
 			[[ -d $d ]] || {
 				>&2 echo "Failed to download resource directory: $RES_DIR/$chooseUser/$d"
 				exit 1
