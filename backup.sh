@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 adb root
 adb wait-for-device
 source .env/bin/activate
@@ -8,9 +8,9 @@ rm -f decrypted.db
 ./android-interact.sh res
 mv decrypted.db decrypted.db$suffix
 ln -s decrypted.db$suffix decrypted.db
-mkdir -p out$suffix
-./dump-msg.py decrypted.db out$suffix
+mkdir -p out
+./dump-msg.py decrypted.db out
 ./list-chats.py decrypted.db
 ./count-message.sh out
-mkdir -p html$suffix
-ls out$suffix/*.txt | while read f ; do ff=$(basename "$f" .txt) ; ./dump-html.py "$ff" --output "html$suffix/$ff.html" || true ; done
+mkdir -p html
+./dump-html.py --all --output "html/"

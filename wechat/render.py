@@ -146,7 +146,7 @@ class HTMLRender(object):
             return fallback()
         return fallback()
 
-    def _render_partial_msgs(self, msgs):
+    def _render_partial_msgs(self, msgs, current_index=0, total_slices=0):
         """ return single html"""
         self.smiley.used_smiley_id.clear()
         slicer = MessageSlicerByTime()
@@ -177,11 +177,14 @@ class HTMLRender(object):
         css = avatar_tpl.format(name='me', avatar=my_avatar)
 
         for talker in talkers:
-            avatar = self.res.get_contact_avatar(talker)
+            if talker == self.parser.username:
+                avatar = my_avatar
+            else:
+                avatar = self.res.get_contact_avatar(talker)
             css += avatar_tpl.format(name=talker, avatar=avatar)
         self.css_string.append(css)
 
-    def render_msgs(self, msgs):
+    def render_msgs(self, msgs, slice_by_date=False):
         """ render msgs of one chat, return a list of html"""
         chat = msgs[0].chat
         if msgs[0].is_chatroom():
@@ -198,10 +201,13 @@ class HTMLRender(object):
             len(msgs), chat))
 
         self.prgs = ProgressReporter("Render", total=len(msgs))
-        slice_by_size = MessageSlicerBySize().slice(msgs)
-        ret = [self._render_partial_msgs(s) for s in slice_by_size]
+        if slice_by_date:
+            slices = MessageSlicerByDate().slice(msgs, diff_thres=7 * 24 * 60 * 60)
+        else:
+            slices = MessageSlicerBySize().slice(msgs)
+        for s in slices:
+            yield self._render_partial_msgs(s)
         self.prgs.finish()
-        return ret
 
 if __name__ == '__main__':
     r = HTMLRender()
